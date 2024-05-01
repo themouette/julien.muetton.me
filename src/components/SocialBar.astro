@@ -1,0 +1,40 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className }: Props = Astro.props;
+import SocialLink from "../components/ui/SocialLink.astro";
+---
+
+<div
+  class:list={[
+    "flex gap-3 justify-center items-center text-base py-4",
+    className,
+  ]}
+>
+  <SocialLink
+    social="github"
+    link="https://github.com/themouette"
+    username="@themouette"
+  />
+  <SocialLink
+    social="twitter"
+    link="https://twitter.com/themouette"
+    username="@themouette"
+  />
+  <SocialLink
+    social="linkedin"
+    link="https://www.linkedin.com/in/themouette/"
+    username="Julien Muetton"
+  />
+  <SocialLink
+    social="email"
+    link="mailto:julien@muetton.me"
+    username="julien@muetton.me"
+  />
+  <SocialLink
+    social="pgp"
+    link="https://github.com/themouette.gpg"
+    username="PGP 0FE9A9C60ED65AFD"
+  />
+</div>

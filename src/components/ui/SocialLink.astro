@@ -1,0 +1,40 @@
+---
+import SocialIcon from "./SocialIcon.astro";
+import type { Social } from "./SocialIcon.astro";
+interface Props {
+  social: Social;
+  username: string;
+  link: string;
+  reverse?: boolean;
+  class?: string;
+}
+
+const { social, username, link, reverse, class: className } = Astro.props;
+---
+
+<a
+  href={link}
+  target="_blank"
+  class:list={[
+    "flex items-center",
+    className,
+    "hover:bg-text-primary",
+    "hover:border-text-primary",
+    "hover:text-background-primary",
+    "hover:shadow-md",
+    "focus:bg-text-primary",
+    "focus:border-text-primary",
+    "focus:text-background-primary",
+    "focus:shadow-md",
+    "focus:ring-0",
+    "active:bg-text-primary",
+    "active:border-text-primary",
+    "active:text-background-primary",
+    "cursor-pointer",
+    "p-2 rounded-full",
+    "border border-border-primary border-solid",
+  ]}
+  title={username}
+>
+  <SocialIcon social={social} reverse={reverse} noColor />
+</a>

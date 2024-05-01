@@ -27,5 +27,7 @@ export default {
       // This allows to use this modifier in tailwind classes.
       addVariant("page-scrolled", ".page-scrolled &");
     }),
+    // Use tailwind typography plugin to render markdown
+    require("@tailwindcss/typography"),
   ],
 };

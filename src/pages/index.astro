@@ -1,16 +1,33 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SocialBar from "../components/SocialBar.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout pageTitle="Home">
+  <div class="flex flex-col justify-stretch">
+    <div class="min-h-[90lvh] flex flex-col justify-center items-center">
+      <div class="flex justify-end container">
+        <SocialBar />
+      </div>
+      <div class="grow flex flex-col justify-evenly items-center font-serif">
+        <h1 class="text-5xl">Hi, I'm Julien</h1>
+        <div class="container mx-auto p-5 text-center text-xl leading-loose">
+          <p>
+            Software engineer since 2005, currently working remotely at{" "}
+            <a href="https://www.datadoghq.com/">Datadog</a>.
+          </p>
+          <p>Arborist wannabe, I live in an orchard in Brittany, France.</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-gray-900 text-gray-50 pt-8 text-sm upercase min-h-[10lvh]">
+      <div class="flex container mx-auto text-center">
+        <p class="w-full">
+          Hosted on <a href="https://github.com/themouette/julien.muetton.me"
+            >GitHub</a
+          >
+        </p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -4,10 +4,11 @@ import SocialBar from "../components/SocialBar.astro";
 import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
-  pageTitle: string;
+  pageTitle?: string;
+  title?: string;
 }
 
-const { pageTitle } = Astro.props;
+const { pageTitle, title } = Astro.props;
 ---
 
 <script>
@@ -26,7 +27,7 @@ const { pageTitle } = Astro.props;
   });
   storeScroll();
 </script>
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout pageTitle={pageTitle || title}>
   <header
     class:list={[
       "border-b border-border-primary bg-background-primary",
@@ -42,7 +43,7 @@ const { pageTitle } = Astro.props;
   </header>
 
   <div class:list={["container mx-auto", "page-scrolled:pt-14"]}>
-    <h1 class="text-4xl font-bold text-left my-8">{pageTitle}</h1>
+    {title && <h1 class="text-4xl font-bold text-left my-8">{title}</h1>}
     <main class="font-sans text-base min-h-[65dvh]">
       <slot />
     </main>

@@ -1,0 +1,58 @@
+---
+import Navigation from "../components/Navigation.astro";
+import SocialBar from "../components/SocialBar.astro";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  pageTitle: string;
+}
+
+const { pageTitle } = Astro.props;
+---
+
+<script>
+  import debounce from "lodash/debounce";
+
+  const storeScroll = () => {
+    document.documentElement.dataset.scroll = `${window.scrollY}`;
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("page-scrolled");
+    } else {
+      document.documentElement.classList.remove("page-scrolled");
+    }
+  };
+  document.addEventListener("scroll", debounce(storeScroll, 100), {
+    passive: true,
+  });
+  storeScroll();
+</script>
+<BaseLayout pageTitle={pageTitle}>
+  <header
+    class:list={[
+      "border-b border-border-primary bg-background-primary",
+      "py-8",
+      "page-scrolled:py-2 page-scrolled:shadow-md page-scrolled:sticky page-scrolled:top-0",
+    ]}
+  >
+    <div class="container mx-auto full-width flex justify-end items-center">
+      <Navigation
+        class="text-xl uppercase page-scrolled:text-base page-scrolled:normal-case"
+      />
+    </div>
+  </header>
+
+  <div class:list={["container mx-auto", "page-scrolled:pt-14"]}>
+    <h1 class="text-4xl font-bold text-left my-8">{pageTitle}</h1>
+    <main class="font-sans text-base min-h-[65dvh]">
+      <slot />
+    </main>
+  </div>
+  <footer class="bg-background-secondary text-text-secondary py-8">
+    <div class="container mx-auto flex items-start justify-between">
+      <SocialBar />
+      <div class="pt-2">
+        <a href="/credits">Credits </a>
+      </div>
+    </div>
+  </footer>
+</BaseLayout>

@@ -1,0 +1,10 @@
+---
+interface Props {
+  skill: string;
+  class?: string;
+}
+
+const { skill, class: className } = Astro.props;
+---
+
+<span class:list={[className]}>{skill}</span>

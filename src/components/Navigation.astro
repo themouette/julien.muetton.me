@@ -6,12 +6,17 @@ interface Props {
 const { hideHomeLink = false, class: className }: Props = Astro.props;
 ---
 
-<ul class:list={["flex gap-3", className]}>
-  {
-    !hideHomeLink && (
-      <li>
-        <a href="/">Home</a>
-      </li>
-    )
-  }
-</ul>
+<nav class={className}>
+  <ul class="flex gap-3">
+    {
+      !hideHomeLink && (
+        <li>
+          <a href="/">Home</a>
+        </li>
+      )
+    }
+    <li>
+      <a href="/resume">Resume</a>
+    </li>
+  </ul>
+</nav>

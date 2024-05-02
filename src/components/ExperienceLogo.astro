@@ -1,0 +1,23 @@
+---
+import type {
+  FrontmatterExperience,
+  Experience,
+} from "../lib/parse-experience";
+interface Props {
+  experience: Experience | FrontmatterExperience;
+  class?: string;
+}
+
+const {
+  experience: { logo, organization },
+  class: className,
+} = Astro.props;
+---
+
+{
+  logo && (
+    <div class:list={["flex items-center", className]}>
+      <img src={logo} alt={organization} class="aspect-auto flex-initial" />
+    </div>
+  )
+}

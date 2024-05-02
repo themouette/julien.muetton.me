@@ -42,9 +42,11 @@ const { pageTitle, title } = Astro.props;
     </div>
   </header>
 
-  <div class:list={["container mx-auto", "page-scrolled:pt-14"]}>
+  <div
+    class:list={["container mx-auto", "page-scrolled:mt-16", "min-h-[76dvh]"]}
+  >
     {title && <h1 class="text-4xl font-bold text-left my-8">{title}</h1>}
-    <main class="font-sans text-base min-h-[65dvh]">
+    <main class="font-sans text-base my-8">
       <slot />
     </main>
   </div>

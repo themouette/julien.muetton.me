@@ -1,0 +1,24 @@
+---
+import Link from "../components/ui/Link.astro";
+import { slugifySkill } from "../lib/skills";
+
+interface Props {
+  skill: string;
+  class?: string;
+}
+
+const { skill: skillName, class: className } = Astro.props;
+const skill = (await Astro.glob("../pages/resume/skills/*.md")).find(
+  (file) => slugifySkill(file.frontmatter.name) === slugifySkill(skillName)
+);
+---
+
+{
+  skill && skill.url ? (
+    <span class:list={[className]}>
+      <Link href={skill.url}>{skill.frontmatter.name}</Link>
+    </span>
+  ) : (
+    <span class:list={[className]}>{skillName}</span>
+  )
+}

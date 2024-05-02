@@ -3,9 +3,10 @@ import { Markdown } from "@astropub/md";
 import Link from "../components/ui/Link.astro";
 import Prose from "../components/ui/Prose.astro";
 import ExperienceLogo from "../components/ExperienceLogo.astro";
-import Skill from "../components/Skill.astro";
+import SkillLink from "../components/SkillLink.astro";
 import PageLayout from "../layouts/PageLayout.astro";
 import { experienceDateString } from "../lib/experience-date-string";
+import { sortExperiences } from "../lib/sort-experiences";
 import {
   parseExperience,
   type FrontmatterExperience,
@@ -16,27 +17,7 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
     ...other,
     frontmatter: parseExperience(frontmatter as FrontmatterExperience),
   }))
-  .sort((a, b) => {
-    const { startDate: aStartDate, endDate: aEndDate } = a.frontmatter;
-    const { startDate: bStartDate, endDate: bEndDate } = b.frontmatter;
-
-    if (aEndDate && !bEndDate) {
-      // b is current, so it should come first
-      return 1;
-    }
-    if (!aEndDate && bEndDate) {
-      // a is current, so it should come first
-      return -1;
-    }
-
-    if (aEndDate && bEndDate) {
-      // both have end dates, so sort by end date
-      return bEndDate.getTime() - aEndDate.getTime();
-    }
-
-    // neither have end dates, so sort by start date
-    return bStartDate.getTime() - aStartDate.getTime();
-  });
+  .sort((a, b) => sortExperiences(a.frontmatter, b.frontmatter));
 ---
 
 <PageLayout pageTitle="My Resume">
@@ -77,7 +58,7 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
               </Prose>
               <div class="flex gap-1 flex-wrap mt-6">
                 {experience.frontmatter.skills.map((skill) => (
-                  <Skill
+                  <SkillLink
                     class="text-xxs rounded-lg bg-slate-200 py-1 px-2"
                     skill={skill}
                   />

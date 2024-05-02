@@ -10,7 +10,7 @@ skills:
   - JavaScript
   - Prototype
   - Scriptaculous
-  - xslt
+  - XSLT
   - C
   - GNU/Linux
   - Linux (embedded system)

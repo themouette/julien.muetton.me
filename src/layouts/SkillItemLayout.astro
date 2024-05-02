@@ -1,0 +1,82 @@
+---
+import PageLayout from "./PageLayout.astro";
+import SkillLink from "../components/SkillLink.astro";
+import Link from "../components/ui/Link.astro";
+import Prose from "../components/ui/Prose.astro";
+import { slugifySkill, type Skill } from "../lib/skills";
+import type { FrontmatterExperience } from "../lib/parse-experience";
+import { parseExperience } from "../lib/parse-experience";
+import { sortExperiences } from "../lib/sort-experiences";
+
+interface Props {
+  frontmatter: Skill;
+}
+const { frontmatter } = Astro.props;
+
+const experiences = (await Astro.glob("../pages/resume/experiences/*.md"))
+  .map(({ frontmatter, ...other }) => ({
+    ...other,
+    frontmatter: parseExperience(frontmatter as FrontmatterExperience),
+  }))
+  .sort((a, b) => sortExperiences(a.frontmatter, b.frontmatter))
+  .filter((experience) =>
+    experience.frontmatter.skills
+      ?.map(slugifySkill)
+      .includes(slugifySkill(frontmatter.name))
+  );
+---
+
+<PageLayout pageTitle="">
+  <div class="flex items-start justify-start w-full gap-5 mt-8">
+    <section class="grow mb-8">
+      <h1 class="text-4xl font-bold text-left mb-8">{frontmatter.name}</h1>
+      <Prose>
+        <slot />
+      </Prose>
+    </section>
+    <div>
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold mb-4">Related Skills</h2>
+        {
+          frontmatter.related?.length ? (
+            <ul class="grid grid-cols-2 gap-2">
+              {frontmatter.related.map((skill) => (
+                <li>
+                  <SkillLink skill={skill} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No related skills</p>
+          )
+        }
+      </div>
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold mb-4">Related Experiences</h2>
+        {
+          experiences.length ? (
+            <ul>
+              {experiences.map((experience) => (
+                <li>
+                  {experience.rawContent().length ? (
+                    <Link href={experience.url || ""}>
+                      {experience.frontmatter.title} @
+                      {experience.frontmatter.organization}
+                    </Link>
+                  ) : (
+                    `${experience.frontmatter.title} @${experience.frontmatter.organization}`
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No related skills</p>
+          )
+        }
+      </div>
+    </div>
+  </div>
+  <div class="mb-8">
+    <Link href="/resume">Back to resume</Link>
+  </div>
+</PageLayout>

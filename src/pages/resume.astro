@@ -24,7 +24,7 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
 ---
 
 <PageLayout pageTitle="My Resume" hideOnPrint>
-  <div class="hidden print:flex justify-between">
+  <div class="hidden print:flex justify-between mb-16">
     <div>
       <h1 class="text-2xl font-bold mx-auto mb-4">Julien Muetton</h1>
       <ul>
@@ -57,56 +57,60 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
       </li>
     </ul>
   </div>
-  <h2 class="text-xl font-bold mx-auto">Experiences</h2>
-  <div class="max-w-[800px] mx-auto my-8 print:max-w-full print:w-full">
-    {
-      experiences.map((experience, index) => (
-        <div>
-          {index !== 0 && (
-            <hr class="w-2/5 h-0.5 mx-auto my-4 bg-gray-100 border-0 rounded sm:my-10 print:hidden" />
-          )}
-          <section class="flex items-start justify-items-center gap-0 sm:gap-8 px-2 sm:px-0 mb-4">
-            <ExperienceLogo
-              experience={experience.frontmatter}
-              class="justify-start w-[100px] hidden sm:block print:block print:w-[50px] print:mr-8"
-            />
-            <div class="grow">
-              <h2 class="text-lg font-bold">
-                {experience.rawContent().length ? (
-                  <Link href={experience.url || ""}>
-                    {experience.frontmatter.title}
-                  </Link>
-                ) : (
-                  experience.frontmatter.title
-                )}{" "}
-                @{experience.frontmatter.organization}{" "}
-              </h2>
-              <div class="flex justify-between pb-2 mb-2 border-b border-border-primary border-dashed">
-                <p class="text-xs italic">{`(${experience.frontmatter.location})`}</p>
-                <p class="text-xs italic font-semibold">
-                  {experienceDateString({
-                    start: experience.frontmatter.startDate,
-                    end: experience.frontmatter.endDate,
-                  })}
-                </p>
+  <div>
+    <h2 class="text-xl font-bold mx-auto sticky top-12">Experiences</h2>
+    <div class="max-w-[800px] mx-auto my-8 print:max-w-full print:w-full">
+      {
+        experiences.map((experience, index) => (
+          <div>
+            {index !== 0 && (
+              <hr class="w-2/5 h-0.5 mx-auto my-4 bg-gray-100 border-0 rounded sm:my-10 print:hidden" />
+            )}
+            <section class="flex items-start justify-items-center gap-0 sm:gap-8 px-2 sm:px-0 mb-4">
+              <ExperienceLogo
+                experience={experience.frontmatter}
+                class="justify-start w-[100px] hidden sm:block print:block print:w-[50px] print:mr-8"
+              />
+              <div class="grow">
+                <h2 class="text-lg font-bold">
+                  {experience.rawContent().length ? (
+                    <Link href={experience.url || ""}>
+                      {experience.frontmatter.title}
+                    </Link>
+                  ) : (
+                    experience.frontmatter.title
+                  )}{" "}
+                  @{experience.frontmatter.organization}{" "}
+                </h2>
+                <div class="flex justify-between pb-2 mb-2 border-b border-border-primary border-dashed">
+                  <p class="text-xs italic">{`(${experience.frontmatter.location})`}</p>
+                  <p class="text-xs italic font-semibold">
+                    {experienceDateString({
+                      start: experience.frontmatter.startDate,
+                      end: experience.frontmatter.endDate,
+                    })}
+                  </p>
+                </div>
+                <Prose class="p:text-sm min-h-16 print:prose-sm print:min-h-0">
+                  <Markdown of={experience.frontmatter.description} />
+                </Prose>
+                <div class="flex gap-1 flex-wrap mt-6 print:hidden">
+                  {experience.frontmatter.skills.map((skill) => (
+                    <SkillLink
+                      class="text-xxs rounded-lg bg-slate-200 py-1 px-2"
+                      skill={skill}
+                    />
+                  ))}
+                </div>
               </div>
-              <Prose class="p:text-sm min-h-16 print:prose-sm print:min-h-0">
-                <Markdown of={experience.frontmatter.description} />
-              </Prose>
-              <div class="flex gap-1 flex-wrap mt-6 print:hidden">
-                {experience.frontmatter.skills.map((skill) => (
-                  <SkillLink
-                    class="text-xxs rounded-lg bg-slate-200 py-1 px-2"
-                    skill={skill}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        </div>
-      ))
-    }
+            </section>
+          </div>
+        ))
+      }
+    </div>
   </div>
-  <h2 class="text-xl font-bold mx-auto">Skills</h2>
-  <AllSkills />
+  <div>
+    <h2 class="text-xl font-bold mx-auto sticky top-12">Skills</h2>
+    <AllSkills />
+  </div>
 </PageLayout>

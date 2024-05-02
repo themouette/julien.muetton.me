@@ -1,5 +1,8 @@
 ---
-
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
 ---
 
 <div
@@ -13,6 +16,7 @@
     "prose-a-active:text-cyan-700",
     "prose-p:text-justify prose-p:leading-normal",
     "prose-img:rounded-xl",
+    className,
   ]}
 >
   <slot />

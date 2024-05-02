@@ -1,6 +1,7 @@
 ---
 import { Markdown } from "@astropub/md";
 import Link from "../components/ui/Link.astro";
+import SocialIcon from "../components/ui/SocialIcon.astro";
 import Prose from "../components/ui/Prose.astro";
 import ExperienceLogo from "../components/ExperienceLogo.astro";
 import SkillLink from "../components/SkillLink.astro";
@@ -11,6 +12,8 @@ import {
   parseExperience,
   type FrontmatterExperience,
 } from "../lib/parse-experience";
+import AllSkills from "../components/AllSkills.astro";
+import { formatDistanceToNowStrict } from "date-fns/formatDistanceToNowStrict";
 
 const experiences = (await Astro.glob("./resume/experiences/*.md"))
   .map(({ frontmatter, ...other }) => ({
@@ -20,18 +23,52 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
   .sort((a, b) => sortExperiences(a.frontmatter, b.frontmatter));
 ---
 
-<PageLayout pageTitle="My Resume">
-  <div class="max-w-[800px] mx-auto my-8">
+<PageLayout pageTitle="My Resume" hideOnPrint>
+  <div class="hidden print:flex justify-between">
+    <div>
+      <h1 class="text-2xl font-bold mx-auto mb-4">Julien Muetton</h1>
+      <ul>
+        <li>
+          <SocialIcon social="birthday" noColor class="inline-block" />
+          {formatDistanceToNowStrict(new Date("1982-03-28"))} old
+        </li>
+        <li>
+          <SocialIcon social="location" noColor class="inline-block" /> an orchard
+          in Brittany, France
+        </li>
+      </ul>
+    </div>
+    <ul>
+      <li>
+        <SocialIcon social="github" class="inline-block" />
+        <span>@themouette</span>
+      </li>
+      <li>
+        <SocialIcon social="twitter" class="inline-block" />
+        <span>@themouette</span>
+      </li>
+      <li>
+        <SocialIcon social="email" noColor class="inline-block" />
+        <span>julien@muetton.me</span>
+      </li>
+      <li>
+        <SocialIcon social="website" noColor class="inline-block" />
+        <span>http://julien.muetton.me</span>
+      </li>
+    </ul>
+  </div>
+  <h2 class="text-xl font-bold mx-auto">Experiences</h2>
+  <div class="max-w-[800px] mx-auto my-8 print:max-w-full print:w-full">
     {
       experiences.map((experience, index) => (
         <div>
           {index !== 0 && (
-            <hr class="w-2/5 h-0.5 mx-auto my-4 bg-gray-100 border-0 rounded md:my-10" />
+            <hr class="w-2/5 h-0.5 mx-auto my-4 bg-gray-100 border-0 rounded sm:my-10 print:hidden" />
           )}
-          <section class="flex items-start justify-items-center gap-8">
+          <section class="flex items-start justify-items-center gap-0 sm:gap-8 px-2 sm:px-0 mb-4">
             <ExperienceLogo
               experience={experience.frontmatter}
-              class="justify-start w-[100px]"
+              class="justify-start w-[100px] hidden sm:block print:block print:w-[50px] print:mr-8"
             />
             <div class="grow">
               <h2 class="text-lg font-bold">
@@ -53,10 +90,10 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
                   })}
                 </p>
               </div>
-              <Prose class="p:text-sm min-h-16">
+              <Prose class="p:text-sm min-h-16 print:prose-sm print:min-h-0">
                 <Markdown of={experience.frontmatter.description} />
               </Prose>
-              <div class="flex gap-1 flex-wrap mt-6">
+              <div class="flex gap-1 flex-wrap mt-6 print:hidden">
                 {experience.frontmatter.skills.map((skill) => (
                   <SkillLink
                     class="text-xxs rounded-lg bg-slate-200 py-1 px-2"
@@ -70,4 +107,6 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
       ))
     }
   </div>
+  <h2 class="text-xl font-bold mx-auto">Skills</h2>
+  <AllSkills />
 </PageLayout>

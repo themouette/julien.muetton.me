@@ -6,9 +6,10 @@ import BaseLayout from "./BaseLayout.astro";
 interface Props {
   pageTitle?: string;
   title?: string;
+  hideOnPrint?: boolean;
 }
 
-const { pageTitle, title } = Astro.props;
+const { pageTitle, title, hideOnPrint = false } = Astro.props;
 ---
 
 <script>
@@ -33,6 +34,7 @@ const { pageTitle, title } = Astro.props;
       "border-b border-border-primary bg-background-primary",
       "py-8",
       "page-scrolled:py-2 page-scrolled:shadow-md page-scrolled:sticky page-scrolled:top-0",
+      ...(hideOnPrint ? ["print:hidden"] : []),
     ]}
   >
     <div class="container mx-auto full-width flex justify-end items-center">
@@ -50,7 +52,12 @@ const { pageTitle, title } = Astro.props;
       <slot />
     </main>
   </div>
-  <footer class="bg-background-secondary text-text-secondary py-8">
+  <footer
+    class:list={[
+      "bg-background-secondary text-text-secondary py-8",
+      ...(hideOnPrint ? ["print:hidden"] : []),
+    ]}
+  >
     <div class="container mx-auto flex items-start justify-between">
       <SocialBar />
       <div class="pt-2">

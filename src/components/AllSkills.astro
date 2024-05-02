@@ -1,0 +1,56 @@
+---
+import SkillLink from "./SkillLink.astro";
+
+const allSkills = {
+  Development: [
+    {
+      name: "Frontend",
+      skills: ["JavaScript", "React", "TypeScript", "CI/CD"],
+    },
+    {
+      name: "Server",
+      skills: ["NodeJS", "Docker"],
+    },
+    { name: "Scripting", skills: ["bash", "python"] },
+    { name: "Others", skills: ["git", "vim", "testing", "linux", "PGP"] },
+    {
+      name: "Standards",
+      skills: ["HTTP", "WebDav", "WebCal", "oAuth", "OpenId", "REST"],
+    },
+  ],
+  "Non Technical": [
+    {
+      name: "Soft Skills",
+      skills: ["Caring", "Communication", "Teamwork", "Problem Solving"],
+    },
+    {
+      name: "Languages",
+      skills: ["French", "English"],
+    },
+  ],
+};
+---
+
+<div>
+  {
+    Object.keys(allSkills).map((category) => (
+      <div class="flex items-start justify-center gap-3 mx-auto flex-col sm:flex-row px-4 sm:px-0">
+        <h2 class="mt-4 print:mt-2 sm:w-40 w-full sm:text-right">{category}</h2>
+        <ul class="sm:w-3/5 w-full print:w-full">
+          {allSkills[category as keyof typeof allSkills].map((skill) => (
+            <li class="flex items-start justify-start gap-3 border-border-primary border-b last:border-0 border-dashed py-4 print:py-2">
+              <h3 class="font-bold w-28">{skill.name}</h3>
+              <ul class="flex flex-wrap gap-3 print:gap-1">
+                {skill.skills.map((s) => (
+                  <li>
+                    <SkillLink skill={s} />
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>

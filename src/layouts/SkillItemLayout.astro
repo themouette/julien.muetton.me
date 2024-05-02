@@ -26,7 +26,7 @@ const experiences = (await Astro.glob("../pages/resume/experiences/*.md"))
   );
 ---
 
-<PageLayout pageTitle="">
+<PageLayout pageTitle={`Skill ${frontmatter.name}`}>
   <div class="flex items-start justify-start w-full gap-5 mt-8">
     <section class="grow mb-8">
       <h1 class="text-4xl font-bold text-left mb-8">{frontmatter.name}</h1>

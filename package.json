@@ -23,7 +23,12 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",
+    "@types/jest-image-snapshot": "^6.4.0",
     "@types/lodash": "^4.17.0",
+    "execa": "^9.0.1",
+    "get-port": "^7.1.0",
+    "jest-image-snapshot": "^6.4.0",
+    "puppeteer": "^22.8.0",
     "vitest": "^1.5.3"
   }
 }

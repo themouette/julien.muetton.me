@@ -1,0 +1,72 @@
+name: Build site
+on: push
+
+# Allow this job to clone the repo
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
+      - name: Install, build, and upload your site
+        uses: withastro/action@v2
+        with:
+          node-version: 20
+          package-manager: npm@latest
+
+  tests_unit:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache-dependency-path: "./package-lock.json"
+          cache: "npm"
+      - name: install dependencies
+        run: npm ci
+      - name: unit test
+        run: npm run test:unit
+
+  tests_e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache-dependency-path: "./package-lock.json"
+          cache: "npm"
+
+      - name: download build artifact in dist
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+      - name: untar build artifact
+        run: mkdir ./dist && tar -xvf ./artifact.tar -C ./dist
+
+      - name: install dependencies, build docker container
+        run: |
+          npm ci
+          npm run docker:build-e2e
+      - name: Ensure shared volume is accessible for docker container
+        run: chmod -R 777 ./e2e/__image_snapshots__
+      - name: test build
+        run: npm run test:e2e
+
+      - name: tar e2e test results
+        if: always() # always run this step even if the previous steps fail
+        run: tar -cvf ./e2e-test-results.tgz e2e/__image_snapshots__
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always() # always run this step even if the previous steps fail
+        with:
+          name: test-e2e-results
+          path: ./e2e-test-results.tgz

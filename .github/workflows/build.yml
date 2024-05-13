@@ -17,30 +17,37 @@ jobs:
           node-version: 20
           package-manager: npm@latest
 
-  get_pr_number:
+  get_gh_infos:
     runs-on: ubuntu-latest
     outputs:
       pr_number: ${{ steps.get_pr_number.outputs.result }}
+      branch_name: ${{ steps.get_branch_name.outputs.branch }}
       comment-id: ${{ steps.fc.outputs.comment-id }}
     steps:
       - uses: actions/github-script@v7
         id: get_pr_number
         with:
           script: |
-            if (context.issue.number) {
+            if (context.issue?.number) {
               // Return issue number if present
               return context.issue.number;
             } else {
               // Otherwise return issue number from commit
-              return (
+              const prs = (
                 await github.rest.repos.listPullRequestsAssociatedWithCommit({
                   commit_sha: context.sha,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                 })
-              ).data[0].number;
+              ).data;
+              return prs.length ? prs[0].number : '';
             }
           result-encoding: string
+
+      - name: Extract branch name
+        id: get_branch_name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
 
       - name: Find Comment
         if: steps.get_pr_number.outputs.result
@@ -50,6 +57,12 @@ jobs:
           issue-number: ${{ steps.get_pr_number.outputs.result }}
           comment-author: "github-actions[bot]"
           body-includes: E2E test results
+
+      - name: echo outputs
+        run: |
+          echo "pr_number=${{ steps.get_pr_number.outputs.result }}"
+          echo "branch_name=${{ steps.get_branch_name.outputs.branch }}"
+          echo "comment-id=${{ steps.fc.outputs.comment-id }}"
 
   tests_unit:
     needs: build
@@ -108,26 +121,18 @@ jobs:
           path: ./e2e-test-results.tgz
 
   comment_on_pr:
-    needs: [tests_e2e, tests_unit, get_pr_number]
+    needs: [tests_e2e, tests_unit, get_gh_infos]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    if: always() && needs.get_pr_number.outputs.pr_number != ''
+    if: always() && needs.get_gh_infos.outputs.pr_number != ''
     steps:
-      - uses: actions/github-script@v7
-        id: get_pr_number
-        with:
-          script: |
-            const needs = ${{ toJson(needs) }};
-            console.log(JSON.stringify(needs, null, 2));
-            return '';
-
       - name: Create Success Comment
         if: needs.tests_e2e.result == 'success' && needs.tests_unit.result == 'success'
         uses: peter-evans/create-or-update-comment@v4
         with:
-          issue-number: ${{ needs.get_pr_number.outputs.pr_number }}
-          comment-id: ${{ needs.get_pr_number.outputs.comment-id }}
+          issue-number: ${{ needs.get_gh_infos.outputs.pr_number }}
+          comment-id: ${{ needs.get_gh_infos.outputs.comment-id }}
           body: |
             :tada: E2E test results are available in the [artifact](${{ needs.tests_e2e.outputs.artifact.artifact-url }}) :tada:
           edit-mode: replace
@@ -136,8 +141,8 @@ jobs:
         if: needs.tests_e2e.result != 'success' || needs.tests_unit.result != 'success'
         uses: peter-evans/create-or-update-comment@v4
         with:
-          issue-number: ${{ needs.get_pr_number.outputs.pr_number }}
-          comment-id: ${{ needs.get_pr_number.outputs.comment-id }}
+          issue-number: ${{ needs.get_gh_infos.outputs.pr_number }}
+          comment-id: ${{ needs.get_gh_infos.outputs.comment-id }}
           body: |
             :red_circle: E2E test results are available in the [artifact](${{ needs.tests_e2e.outputs.artifact.artifact-url }}) :red_circle:
 
@@ -147,3 +152,19 @@ jobs:
             npm run test:e2e -- -u
             ```
           edit-mode: replace
+
+  deploy:
+    needs: [tests_e2e, tests_unit, get_gh_infos]
+    if: success() && needs.get_gh_infos.outputs.branch_name == 'main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

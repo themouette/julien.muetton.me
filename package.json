@@ -8,7 +8,11 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "vitest"
+    "test:unit": "vitest run ./src",
+    "test:e2e-internal": "vitest run ./e2e",
+    "test:e2e": "docker run -i --user pptruser --init --mount type=bind,source=\"$(git rev-parse --show-toplevel)/dist\",target=\"/app/dist\" --mount type=bind,source=\"$(git rev-parse --show-toplevel)/e2e\",target=\"/app/e2e\" -w \"/app\" --cap-add=SYS_ADMIN --rm julienmuettonme-e2e",
+    "test": "npm run test:unit && npm run test:e2e",
+    "docker:build-e2e": "docker build -t julienmuettonme-e2e -f ./e2e/docker/Dockerfile ."
   },
   "dependencies": {
     "@astrojs/check": "^0.5.10",
@@ -23,7 +27,12 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",
+    "@types/jest-image-snapshot": "^6.4.0",
     "@types/lodash": "^4.17.0",
+    "execa": "^9.0.1",
+    "get-port": "^7.1.0",
+    "jest-image-snapshot": "^6.4.0",
+    "puppeteer": "^22.8.0",
     "vitest": "^1.5.3"
   }
 }

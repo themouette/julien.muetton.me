@@ -1,5 +1,6 @@
 import { execa } from "execa";
 import getPort from "get-port";
+import stripAnsi from "strip-ansi";
 
 export type Process = {
   stop(): Promise<void>;
@@ -40,9 +41,9 @@ export async function startProcess() {
     server.stdout.on("data", (stream: Buffer) => {
       // console.log(stream.toString("utf-8"));
       if (
-        stream
-          .toString("utf-8")
-          .includes(`Local    http://localhost:${port.toString()}`)
+        stripAnsi(stream.toString("utf-8")).includes(
+          `Local    http://localhost:${port.toString()}`
+        )
       ) {
         console.log("Server started on port", port);
         console.log("http://localhost:" + port);

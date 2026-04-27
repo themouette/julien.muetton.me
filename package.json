@@ -15,13 +15,12 @@
     "docker:build-e2e": "docker build -t julienmuettonme-e2e -f ./e2e/docker/Dockerfile ."
   },
   "dependencies": {
-    "@astrojs/check": "^0.5.10",
-    "@astrojs/mdx": "^2.3.1",
-    "@astrojs/tailwind": "^5.1.0",
-    "@astropub/md": "^0.4.0",
-    "astro": "^4.7.0",
+    "@astrojs/check": "^0.9.8",
+    "@astrojs/mdx": "^5.0.4",
+    "astro": "^6.1.9",
     "date-fns": "^3.6.0",
     "lodash": "^4.17.21",
+    "marked": "^15.0.0",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5"
   },
@@ -29,10 +28,14 @@
     "@tailwindcss/typography": "^0.5.13",
     "@types/jest-image-snapshot": "^6.4.0",
     "@types/lodash": "^4.17.0",
+    "autoprefixer": "^10.4.0",
     "execa": "^9.0.1",
     "get-port": "^7.1.0",
     "jest-image-snapshot": "^6.4.0",
     "puppeteer": "^22.8.0",
-    "vitest": "^1.5.3"
+    "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "yaml": "^2.8.0"
   }
 }

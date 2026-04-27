@@ -1,5 +1,5 @@
 ---
-import { Markdown } from "@astropub/md";
+import { marked } from "marked";
 import Link from "../components/ui/Link.astro";
 import SocialIcon from "../components/ui/SocialIcon.astro";
 import Prose from "../components/ui/Prose.astro";
@@ -15,7 +15,9 @@ import {
 import AllSkills from "../components/AllSkills.astro";
 import { formatDistanceToNowStrict } from "date-fns/formatDistanceToNowStrict";
 
-const experiences = (await Astro.glob("./resume/experiences/*.md"))
+const experiences = (Object.values(
+  import.meta.glob("./resume/experiences/*.md", { eager: true })
+) as any[])
   .map(({ frontmatter, ...other }) => ({
     ...other,
     frontmatter: parseExperience(frontmatter as FrontmatterExperience),
@@ -73,7 +75,7 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
               />
               <div class="grow">
                 <h2 class="text-lg font-bold">
-                  {experience.rawContent().length ? (
+                  {experience.rawContent().trim().length ? (
                     <Link href={experience.url || ""}>
                       {experience.frontmatter.title}
                     </Link>
@@ -92,7 +94,7 @@ const experiences = (await Astro.glob("./resume/experiences/*.md"))
                   </p>
                 </div>
                 <Prose class="p:text-sm min-h-16 print:prose-sm print:min-h-0">
-                  <Markdown of={experience.frontmatter.description} />
+                  <Fragment set:html={marked(experience.frontmatter.description ?? "")} />
                 </Prose>
                 <div class="flex gap-1 flex-wrap mt-6 print:hidden">
                   {experience.frontmatter.skills.map((skill) => (

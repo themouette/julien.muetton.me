@@ -13,7 +13,9 @@ interface Props {
 }
 const { frontmatter } = Astro.props;
 
-const experiences = (await Astro.glob("../pages/resume/experiences/*.md"))
+const experiences = (Object.values(
+  import.meta.glob("../pages/resume/experiences/*.md", { eager: true })
+) as any[])
   .map(({ frontmatter, ...other }) => ({
     ...other,
     frontmatter: parseExperience(frontmatter as FrontmatterExperience),
@@ -58,7 +60,7 @@ const experiences = (await Astro.glob("../pages/resume/experiences/*.md"))
             <ul>
               {experiences.map((experience) => (
                 <li>
-                  {experience.rawContent().length ? (
+                  {experience.rawContent().trim().length ? (
                     <Link href={experience.url || ""}>
                       {experience.frontmatter.title} @
                       {experience.frontmatter.organization}

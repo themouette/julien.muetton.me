@@ -8,9 +8,9 @@ interface Props {
 }
 
 const { skill: skillName, class: className } = Astro.props;
-const skill = (await Astro.glob("../pages/resume/skills/*.md")).find(
-  (file) => slugifySkill(file.frontmatter.name) === slugifySkill(skillName)
-);
+const skill = Object.values(
+  import.meta.glob("../pages/resume/skills/*.md", { eager: true })
+).find((file: any) => slugifySkill(file.frontmatter.name) === slugifySkill(skillName)) as any;
 ---
 
 {

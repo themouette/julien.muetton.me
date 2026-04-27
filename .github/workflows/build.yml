@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repository using git
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install, build, and upload your site
-        uses: withastro/action@v2
+        uses: withastro/action@v6
         with:
           node-version: 20
           package-manager: npm@latest
@@ -24,7 +24,7 @@ jobs:
       branch_name: ${{ steps.get_branch_name.outputs.branch }}
       comment-id: ${{ steps.fc.outputs.comment-id }}
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v9
         id: get_pr_number
         with:
           script: |
@@ -51,7 +51,7 @@ jobs:
 
       - name: Find Comment
         if: steps.get_pr_number.outputs.result
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         id: fc
         with:
           issue-number: ${{ steps.get_pr_number.outputs.result }}
@@ -69,8 +69,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repository using git
-        uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+        uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
           cache-dependency-path: "./package-lock.json"
@@ -87,8 +87,8 @@ jobs:
       artifact: ${{ steps.upload-test-results.outputs.artifact }}
     steps:
       - name: Checkout your repository using git
-        uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+        uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
           cache-dependency-path: "./package-lock.json"
@@ -114,7 +114,7 @@ jobs:
         if: always() # always run this step even if the previous steps fail
         run: tar -cvf ./e2e-test-results.tgz e2e/__image_snapshots__
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always() # always run this step even if the previous steps fail
         with:
           name: test-e2e-results
@@ -129,7 +129,7 @@ jobs:
     steps:
       - name: Create Success Comment
         if: needs.tests_e2e.result == 'success' && needs.tests_unit.result == 'success'
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ needs.get_gh_infos.outputs.pr_number }}
           comment-id: ${{ needs.get_gh_infos.outputs.comment-id }}
@@ -139,7 +139,7 @@ jobs:
 
       - name: Create Failure Comment
         if: needs.tests_e2e.result != 'success' || needs.tests_unit.result != 'success'
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ needs.get_gh_infos.outputs.pr_number }}
           comment-id: ${{ needs.get_gh_infos.outputs.comment-id }}
@@ -167,4 +167,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
